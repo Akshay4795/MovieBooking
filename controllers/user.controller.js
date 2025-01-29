@@ -1,9 +1,8 @@
 const User = require("../models/user.model");
-
+const Movie = require("../models/movie.model");
 const uuidTokenGenerator = require("uuid-token-generator");
 const { v4: uuidv4 } = require("uuid");
 const b2a = require("b2a");
-const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { secretKey } = require("../config/db.config");
 
@@ -11,7 +10,6 @@ const signUp = async (req, res) => {
   try {
     const { email_address, first_name, last_name, mobile_number, password } =
       req.body;
-    console.log(req.body);
     const existingUser = await User.findOne({ email: email_address });
     if (existingUser) {
       return res.status(400).json({ message: "User already exists" });
@@ -45,7 +43,6 @@ const login = async (req, res) => {
   try {
     let authorization = req.headers.authorization;
     let userdetail = b2a.atob(authorization.split(" ")[1]);
-    console.log(userdetail);
     const email = userdetail.split(":")[0];
     const password = userdetail.split(":")[1];
 
@@ -157,12 +154,27 @@ const bookings = async (req, res) => {
       }
       const email = decoded.email;
       let user = await User.findOne({ email: email });
-
       const { bookingRequest } = req.body;
+      const shows = await Movie.findOne(
+        {
+          "shows.id": bookingRequest.show_id,
+        },
+        { shows: 1 }
+      );
 
+      let show = shows.shows.filter(
+        (show) => show.id == bookingRequest.show_id
+      );
+      if (show.length == 0) {
+        return res.status(400).json({ error: "Invalid Show ID" });
+      }
       bookingRequest.reference_number = user.bookingRequests.length + 1;
       user.bookingRequests.push(bookingRequest);
       await user.save();
+
+      show[0].available_seats =
+        show[0].available_seats - bookingRequest.tickets[0];
+      await shows.save();
       res
         .status(201)
         .json({ reference_number: bookingRequest.reference_number });

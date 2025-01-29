@@ -25,32 +25,15 @@ router.get("/:movieId/shows", async (req, res, next) => {
     res.status(500).json({ error: error.message });
   }
 });
-router.get("/", async (req, res, next) => {
+router.get("/", async (req, res) => {
   try {
-    if (
-      (req.query.status != null || req.query.status != "") &&
-      req.query.title == undefined
-    ) {
-      const movies = { movies: await findAllMovies(req.query.status) };
-      return res.status(200).json(movies);
-    }
-    next();
+    const movies = { movies: await findAllMovies(req.query) };
+    return res.status(200).json(movies);
   } catch (error) {
     // Handle error and return error message
     res.status(500).json({ error: error.message });
   }
 });
-
-// router.get("/", async (req, res, next) => {
-//   try {
-
-//     res.status(200).send("inside all filters");
-//     // res.status(200).send(await findAllMovies(req.query.status));
-//   } catch (error) {
-//     // Handle error and return error message
-//     res.status(500).json({ error: error.message });
-//   }
-// });
 
 router.get("/", async (req, res, next) => {
   try {

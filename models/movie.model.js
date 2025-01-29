@@ -3,18 +3,6 @@ const Schema = mongoose.Schema;
 const genreSchema = require("./genre.model");
 const artists = require("./artist.model");
 
-// const showSchema = new Schema({
-//   id: { type: Number, required: true },
-//   theatre: {
-//     name: { type: String, required: true },
-//     city: { type: String, required: true },
-//   },
-//   language: { type: String, required: true },
-//   show_timing: { type: Date, required: true },
-//   available_seats: { type: Number, required: true },
-//   unit_price: { type: Number, required: true },
-// });
-
 const movieSchema = new Schema({
   movieid: { type: Number, required: true },
   title: { type: String, required: true },
@@ -24,7 +12,6 @@ const movieSchema = new Schema({
   release_date: { type: Date, required: true },
   publish_date: { type: Date, required: true },
   artists: [{ type: Schema.Types.ObjectId, ref: "artists", require: true }],
-  //genres: [{ type: Schema.Types.ObjectId, ref: "genres", require: true }],
   genres: [{ type: String, require: true }],
   duration: { type: Number, required: true },
   critic_rating: { type: Number, required: true },

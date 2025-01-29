@@ -8,12 +8,14 @@ const movieRoutes = require("./routes/movie.routes");
 const genreRoutes = require("./routes/genre.routes");
 const artistRoutes = require("./routes/artist.routes");
 const userRoutes = require("./routes/user.routes");
+
 app.use(cors());
 app.use(express.json());
 app.use("/api/movies", movieRoutes);
 app.use("/api/genres", genreRoutes);
 app.use("/api/artists", artistRoutes);
 app.use("/api/auth", userRoutes);
+
 mongoose
   .connect(DB_URL)
   .then(() => {
